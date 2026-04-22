@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define N 4  // Number of cities
+
+int graph[N][N] = {
+    {0, 10, 15, 20},
+    {10, 0, 35, 25},
+    {15, 35, 0, 30},
+    {20, 25, 30, 0}
+};
+
+// Function to swap two numbers
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Function to generate permutations
+void permute(int arr[], int l, int r, int *min_cost) {
+    if (l == r) {
+        int cost = 0;
+        int k = 0;
+
+        for (int i = 0; i < N - 1; i++) {
+            cost += graph[arr[i]][arr[i + 1]];
+        }
+
+        cost += graph[arr[N - 1]][arr[0]]; // return to start
+
+        if (cost < *min_cost)
+            *min_cost = cost;
+
+        return;
+    }
+
+    for (int i = l; i <= r; i++) {
+        swap(&arr[l], &arr[i]);
+        permute(arr, l + 1, r, min_cost);
+        swap(&arr[l], &arr[i]); // backtrack
+    }
+}
+
+int main() {
+    int arr[N];
+    int min_cost = INT_MAX;
+
+    // Initialize cities
+    for (int i = 0; i < N; i++)
+        arr[i] = i;
+
+    permute(arr, 1, N - 1, &min_cost);
+
+    printf("Minimum travelling cost: %d\n", min_cost);
+
+    return 0;
+}
